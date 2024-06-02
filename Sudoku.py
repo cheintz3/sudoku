@@ -5,7 +5,7 @@ import numpy as np
 
 import Row
 import Col
-import Block
+import Box
 import Cell
 
 
@@ -23,15 +23,15 @@ class Sudoku:
         # generatepuzzle()
 
         self.clues = clues
-        validate_input()
-        generate_rows()
-        generate_cols()
-        generate_boxes()
-        generate_cells()
+        self.generate_cells()
+        self.__validate_input()
+        self.generate_rows()
+        self.generate_cols()
+        self.generate_boxes()
 
         # displaypuzzle()
 
-    def validate_input(self):
+    def __validate_input(self):
         # checks if input comprises a valid puzzle
         # does NOT check for solvability or uniqueness of solution
         #    should it?
@@ -42,19 +42,39 @@ class Sudoku:
         # input doesn't contain extra/invalid characters or delimiters?
         self.puzzle = self.clues
         self.n = self.puzzle.shape[0]
-    
+        
+    def generate_cells(self):
+        cells = {}
+        for r in range(self.n):
+            row_label = r+1
+            for c in range(self.n):
+                col_label = string.ascii_uppercase[c]
+                cell_label = col_label + str(row_label)
+                cells[cell_label] = self.clues[r,c]
+        self.cells = cells
+
     def generate_rows(self):
         rows = {}
         for r in range(self.n):
-            this_row = self.puzzle[r,:]
-            rows[r+1] = Row(this_row)
+            cells = []
+            row_label = r+1
+            for c in range(self.n):
+                col_label = string.ascii_uppercase[c]
+                cell_label = col_label + str(row_label)
+                cells.append(self.cells[cell_label])
+            rows[r+1] = Row(cells)
         self.rows = rows
         
-    def generate_rows(self):
+    def generate_cols(self):
         cols = {}
         for c in range(self.n):
-            this_col = self.puzzle[:,c]
-            cols[string.ascii_lowercase[c]] = Col(this_col)
+            cells = []
+            col_label = string.ascii_uppercase[c]
+            for r in range(self.n):
+                row_label = r+1
+                cell_label = col_label + str(row_label)
+                cells.append(self.cells[cell_label])
+            cols[r+1] = Row(cells)
         self.cols = cols
     
     def generate_boxes(self):
@@ -68,9 +88,3 @@ class Sudoku:
                                     first_col_idx:last_col_idx+1]
             boxes[b+1] = Box(this_box)
         self.boxes = boxes
-    
-    def generate_cells(self):
-        for r in range(self.n):
-            for c in range(self.n):
-                
-                
