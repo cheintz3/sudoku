@@ -15,6 +15,7 @@ class Sudoku:
     - Rows (.rows plus .row1, .row2, etc) 
     - Cols (.cols plus .cola, .colb, etc)
     - Boxes (.boxes plus .box1, .box2, etc)
+    - Cells (dictionary or list? Key is already field of Cell class)
     - Shape/n - puzzle size (assume square or allow for different puzzle sizes)
     '''
     def __init__(self, clues):
@@ -50,7 +51,8 @@ class Sudoku:
             for c in range(self.n):
                 col_label = string.ascii_uppercase[c]
                 cell_label = col_label + str(row_label)
-                cells[cell_label] = self.clues[r,c]
+                position = (cell_label[1], cell_label[0], self.get_box(cell_label))
+                cells[cell_label] = Cell(position, self.clues[r,c])
         self.cells = cells
 
     def generate_rows(self):
@@ -62,7 +64,7 @@ class Sudoku:
                 col_label = string.ascii_uppercase[c]
                 cell_label = col_label + str(row_label)
                 cells.append(self.cells[cell_label])
-            rows[r+1] = Row(cells)
+            rows[r+1] = Row(row_label, cells)
         self.rows = rows
         
     def generate_cols(self):
@@ -74,17 +76,36 @@ class Sudoku:
                 row_label = r+1
                 cell_label = col_label + str(row_label)
                 cells.append(self.cells[cell_label])
-            cols[r+1] = Row(cells)
+
+            cols[r+1] = Col(col_label, cells)
         self.cols = cols
     
     def generate_boxes(self):
         boxes = {}
         for b in range(self.n):
+            cells = {}
             first_row_idx = b // int(math.sqrt(self.n))
             last_row_idx = first_row_idx + int(math.sqrt(self.n)) - 1
+            row_labels = np.arange(first_row_idx, last_row_idx + 1) + 1
+
             first_col_idx = b % int(math.sqrt(self.n))
             last_col_idx = first_col_idx + int(math.sqrt(self.n)) - 1
-            this_box = self.puzzle[first_row_idx:last_row_idx+1,
-                                    first_col_idx:last_col_idx+1]
-            boxes[b+1] = Box(this_box)
+            col_labels = string.ascii_uppercase[first_col_idx:last_col_idx+1]
+
+            for r in row_labels:
+                for c in col_labels:
+                    cell_label = c+str(r)
+                    cells[cell_label] = self.cells[cell_label]
+            
+            box_num = b+1
+            boxes[box_num] = Box(box_num, cells)
         self.boxes = boxes
+    
+    def get_box(self, position):
+        # int [1,n]
+        row_idx = position[1]
+        # int [0,n-1]
+        col_idx = ord(position[0])-65
+        n = self.n
+        box = row_idx + int(math.sqrt(self.n))*col_idx
+        return box
