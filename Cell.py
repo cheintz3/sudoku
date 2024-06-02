@@ -1,7 +1,5 @@
 import numpy as np
 
-import Sudoku
-
 class Cell:
     '''
     Useful fields:
@@ -12,8 +10,7 @@ class Cell:
     - Position (row label, col label, box number)
     - Candidates (available after get_candidates())
     '''
-    def __init__(self, puzzle, position, value):
-        self.puzzle = puzzle
+    def __init__(self, position, value):
         self.value = value
         self.position = position
         self.row = position[1]

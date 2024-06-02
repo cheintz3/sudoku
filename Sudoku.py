@@ -3,10 +3,8 @@ import math
 
 import numpy as np
 
-import Row
-import Col
-import Box
-import Cell
+from cell import Cell
+from units import Row, Col, Box
 
 
 class Sudoku:
@@ -24,8 +22,9 @@ class Sudoku:
         # generatepuzzle()
 
         self.clues = clues
-        self.generate_cells()
+        self.n = clues.shape[0]
         self.__validate_input()
+        self.generate_cells()
         self.generate_rows()
         self.generate_cols()
         self.generate_boxes()
@@ -41,8 +40,9 @@ class Sudoku:
         # input square?
         # cell entries are single digit integers?
         # input doesn't contain extra/invalid characters or delimiters?
-        self.puzzle = self.clues
-        self.n = self.puzzle.shape[0]
+        # self.puzzle = self.clues
+        # self.n = self.puzzle.shape[0]
+        pass
         
     def generate_cells(self):
         cells = {}
@@ -66,7 +66,7 @@ class Sudoku:
                 cells.append(self.cells[cell_label])
             rows[r+1] = Row(row_label, cells)
         self.rows = rows
-        
+
     def generate_cols(self):
         cols = {}
         for c in range(self.n):
@@ -103,9 +103,10 @@ class Sudoku:
     
     def get_box(self, position):
         # int [1,n]
-        row_idx = position[1]
+        row_idx = int(position[1])
         # int [0,n-1]
-        col_idx = ord(position[0])-65
+        col_idx = int(ord(position[0])-65)
         n = self.n
-        box = row_idx + int(math.sqrt(self.n))*col_idx
+        box = row_idx + int(math.sqrt(n))*col_idx
+
         return box
