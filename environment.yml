@@ -1,0 +1,9 @@
+name: sudoku
+channels:
+  - defaults
+dependencies:
+  - pandas
+  - plotly
+  - pip
+  - pip:
+      - streamlit
