@@ -23,13 +23,12 @@ class Sudoku:
     - Shape/n - puzzle size (assume square or allow for different puzzle sizes)
     '''
     def __init__(self, clues):
-        # for now assume input is 2D matrix of valid size
+        # for now assume input is string of single digit integers of valid size
         # puzzle should be square
-        # generatepuzzle()
 
-        self.clues = clues
-        self.n = clues.shape[0]
         self.__validate_input()
+        self.clues = self.get_clue_array(clues)
+        self.n = self.clues.shape[0]
         self.generate_cells()
         self.generate_rows()
         self.generate_cols()
@@ -49,6 +48,20 @@ class Sudoku:
         # self.puzzle = self.clues
         # self.n = self.puzzle.shape[0]
         pass
+
+    def get_clue_array(self, clues):
+        """
+        converts clue string to array representing puzzle
+        inputs:
+            clues - string of single digit integers. Length should be perfect square.
+        """
+        n = int(math.sqrt(len(clues)))
+        clue_arr = np.zeros((n,n))
+
+        for r in range(n):
+            this_row_slice = slice(r*n, (r+1)*n)
+            clue_arr[r, :n] = np.array(list(clues[this_row_slice]))
+        return clue_arr
 
     def generate_cells(self):
         ''' 
